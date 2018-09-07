@@ -1,0 +1,68 @@
+/*
+sequence
+	@dbConn = dbSqlConn("com.mysql.jdbc.Driver" "jdbc:mysql://localhost/MySQL" "root" "root")
+	loopStream(@row streamDbSql(@dbConn "select * from world.city where population > 9000000"))
+		@name = sel(@row 1)
+		@geo = rest("get" "https://maps.googleapis.com/maps/api/geocode/json" list(@null keyValue("address" @name) keyValue("key" "AIzaSyDIAFef_AWFt6tmohcpsErrCUjFOtCNHck")) list(@null) "")
+		@lati = sel(@geo 'result' 'results' 0 'geometry' 'location' 'lat')
+		@lngi = sel(@geo 'result' 'results' 0 'geometry' 'location' 'lng')
+		print("the location of `@name` is (`@lati`, `@lngi`)")
+*/
+sequence
+(
+  assign
+  (
+    @dbConn
+    dbSqlConn
+    (
+      "com.mysql.jdbc.Driver"
+      "jdbc:mysql://localhost/MySQL"
+      "root"
+      "root"
+    )
+  )
+  loopStream
+  (
+    @row
+    streamDbSql
+    (
+      @dbConn
+      "select * from world.city where population > 9000000"
+    )
+    assign
+    (
+      @name
+      sel
+      (
+        @row
+        1
+      )
+    )
+    assign
+    (
+      @geo
+      rest
+      (
+        "get"
+        "https://maps.googleapis.com/maps/api/geocode/json"
+        list
+        (
+          @null
+          keyValue
+          (
+            "address"
+            @name
+          )
+          keyValue
+          (
+            "key"
+            "AIzaSyDIAFef_AWFt6tmohcpsErrCUjFOtCNHck"
+          )
+        )
+        list
+        (
+          @null
+        )
+        ""
+      )
+    )
